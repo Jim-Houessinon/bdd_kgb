@@ -3,10 +3,15 @@
 $pdo = dbConnect();
 
 function dbConnect()
-{
+{ 
+    $hostName = "i54jns50s3z6gbjt.chr7pe7iynqr.eu-west-1.rds.amazonaws.com";
+    $databaseName = "bh9q7lke8xm08ps7";
+    $userName = "jeqnjyhmqk1tlrnu";
+    $password = "a1ai0zar7rlw9tvl";
+
     try
     {
-        $pdo = new PDO('mysql:host=localhost;dbname=donnees_kgb','root','Royaume13.');
+        $pdo = new PDO("mysql:host=$hostName;dbname=$databaseName", $userName, $password);
         return $pdo;
     }
 
