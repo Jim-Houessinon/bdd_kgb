@@ -1,18 +1,18 @@
 <?php
 
+$hostName = "i54jns50s3z6gbjt.chr7pe7iynqr.eu-west-1.rds.amazonaws.com";
+$databaseName = "bh9q7lke8xm08ps7";
+$userName = "jeqnjyhmqk1tlrnu";
+$password = "a1ai0zar7rlw9tvl";
+$t ="coco";
 $pdo = dbConnect();
 
 function dbConnect()
-{ 
-    $hostName = "i54jns50s3z6gbjt.chr7pe7iynqr.eu-west-1.rds.amazonaws.com";
-    $databaseName = "bh9q7lke8xm08ps7";
-    $userName = "jeqnjyhmqk1tlrnu";
-    $password = "a1ai0zar7rlw9tvl";
-
+{  
     try
     {
-        $pdo = new PDO("mysql:host=$hostName;dbname=$databaseName", $userName, $password);
-        return $pdo;
+        global $hostName, $databaseName, $userName, $password;
+        return $pdo = new PDO("mysql:host=$hostName;dbname=$databaseName", $userName, $password);
     }
 
     catch(Exception $e)
@@ -23,7 +23,7 @@ function dbConnect()
 
 function listerTout()
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("SELECT * FROM missions");
 
     if($statement->execute())
@@ -40,7 +40,7 @@ function listerTout()
 
 function listerDetailMission($condition)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("SELECT * FROM missions WHERE id = ".$condition);
 
     if($statement->execute())
@@ -64,13 +64,13 @@ function adminLister($table, $colonne, $condition)
 
     if($condition == "")
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT ".$colonne." FROM ".$table);
     }
 
     else
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT ".$colonne." FROM ".$table." WHERE id = ".$condition);
     }
 
@@ -88,8 +88,8 @@ function adminLister($table, $colonne, $condition)
 
 function verifierTableExiste($table)
 {
-    $pdo = dbConnect();
-    $statement = $pdo->prepare("SHOW TABLES FROM donnees_kgb LIKE '".$table."'");
+    global $pdo, $databaseName;
+    $statement = $pdo->prepare("SHOW TABLES FROM ".$databaseName." LIKE '".$table."'");
     $statement->execute();
 
     if($statement -> fetch() > 0)
@@ -105,7 +105,7 @@ function verifierTableExiste($table)
 
 function verifierColonneExiste($table, $colonne)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("SHOW COLUMNS FROM ".$table." LIKE '".$colonne."'");
     
     try
@@ -133,7 +133,7 @@ function creerTable($table, $colonne, $type)
 {
     if(verifierTableExiste($table) == 0)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("CREATE TABLE ".$table." (".$colonne." ".$type.")");
         $statement->execute();
 
@@ -156,7 +156,7 @@ function creerTable($table, $colonne, $type)
 
 function creerColonne($table, $colonne, $type)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("ALTER TABLE ".$table." ADD ".$colonne." ".$type);
     $statement->execute();
 
@@ -175,7 +175,7 @@ function modifierColonne($table, $colonne, $type)
 {
     if(verifierColonneExiste($table, $colonne) == 1)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("ALTER TABLE ".$table." MODIFY ".$colonne." ".$type);
         if($statement->execute())
         {
@@ -191,7 +191,7 @@ function modifierColonne($table, $colonne, $type)
 
 function supprimerTable($table)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("DROP TABLE ".$table);
 
     if($statement->execute())
@@ -207,23 +207,26 @@ function supprimerTable($table)
 
 function supprimerColonne($table, $colonne)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("ALTER TABLE ".$table." DROP COLUMN ".$colonne);
 
-    if($statement->execute())
+    try
     {
+        $statement->execute();
+ 
         echo "Colonne ".$colonne." supprimé !";
     }
 
-    else
+    catch(PDOException $e)
     {
-        echo "Problème lors de la suppression !";
+        echo "Problème lors de la suppression.".'<br>'."La table ne peut contenir moins d'une colonne !";
+        
     }
 }
 
 function insertion($table, $designation, $valeur)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("INSERT INTO ".$table." (".$designation.") VALUES ('".$valeur."')");
 
     if($statement->execute())
@@ -252,7 +255,7 @@ function insertionMission($table, $action, $statut, $colonne, $valeur, $type, $i
 
 function recupNationalite($table, $id)
 {
-    $pdo = dbConnect();
+    global $pdo;
     $statement = $pdo->prepare("SELECT nationalite FROM ".$table." WHERE id = ".$id);
     
     if($statement->execute())
@@ -269,7 +272,7 @@ function recupNationalite($table, $id)
 
     function recupPays($table, $id)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT pays FROM ".$table." WHERE id = ".$id);
     
         if($statement->execute())
@@ -286,7 +289,7 @@ function recupNationalite($table, $id)
 
     function recupSpecialite($table, $id)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT specialites FROM ".$table." WHERE id = ".$id);
     
         if($statement->execute())
@@ -303,7 +306,7 @@ function recupNationalite($table, $id)
 
     function verifAdmin($email, $password)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT nom FROM administrateurs WHERE email = '".$email."' AND mot_de_passe = '".$password."'");
         $statement->execute();
         $reponse = $statement -> fetch(PDO::FETCH_ASSOC);
@@ -324,7 +327,7 @@ function recupNationalite($table, $id)
 
     function recupPrenom($email, $password)
     {
-        $pdo = dbConnect();
+        global $pdo;
         $statement = $pdo->prepare("SELECT prenom FROM administrateurs WHERE email = '".$email."' AND mot_de_passe = '".$password."'");
         $statement->execute();
         $prenom = $statement -> fetch(PDO::FETCH_ASSOC);

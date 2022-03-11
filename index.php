@@ -16,7 +16,7 @@ if(isset($_POST['action']))
         require('tableauDetailMission.php');
     }
 
-    elseif ($_POST['action'] == "creer")
+        elseif ($_POST['action'] == "creer")
         { 
             if(verifierTableExiste($_POST['table']) == 0)
             {
@@ -137,26 +137,26 @@ if(isset($_POST['action']))
 }
 
 elseif(isset($_POST['condition']))
-    {
-        $donnees = listerDetailMission($_POST['condition']);
-        require('tableauDetailMission.php');
-    }
+{
+    $donnees = listerDetailMission($_POST['condition']);
+    require('tableauDetailMission.php');
+}
 
 elseif(isset($_POST['email']))
+{
+    if(verifAdmin($_POST['email'], $_POST['password']) !== 0)
     {
-        if(verifAdmin($_POST['email'], $_POST['password']) !== 0)
-        {
-            $prenom = recupPrenom($_POST['email'], $_POST['password']);
-            session_start();
-            $_SESSION['prenom'] = $prenom;
-            require('gestionBdd.php');
-        }
-
-        else
-        {
-            echo "Vous n'êtes pas autorisé a accéder à cette espace.";
-        }
+        $prenom = recupPrenom($_POST['email'], $_POST['password']);
+        session_start();
+        $_SESSION['prenom'] = $prenom;
+        require('gestionBdd.php');
     }
+
+    else
+    {
+        echo "Vous n'êtes pas autorisé a accéder à cette espace.";
+    }
+}
 
 else
 {   

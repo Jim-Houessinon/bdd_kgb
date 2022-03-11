@@ -55,12 +55,12 @@ if(!isset($_SESSION))
                             <input type="text" class="form-control col-md-7" name="colonne" placeholder="Nom de la colonne">
                             </div>
                             <div class="mt-2">
-                            <label>Valeur</label>
-                            <input type="text" class="form-control col-md-7" name="valeur" placeholder="Une valeur..">
-                            </div>
-                            <div class="mt-2">
                             <label>Type du champ de la colonne</label>
                             <input type="text" class="form-control col-md-7" name="type" placeholder="Ex : varchar(50)">
+                            </div>
+                            <div class="mt-2">
+                            <label>Valeur</label>
+                            <input type="text" class="form-control col-md-7" name="valeur" placeholder="Une valeur..">
                             </div>
                             <div class="mt-2">
                             <label>Id</label>
